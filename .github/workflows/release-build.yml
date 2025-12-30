@@ -1,0 +1,40 @@
+name: Release Build
+
+on:
+  release:
+    types: [published]
+  
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    env:
+      NEMESIS_VERSION_NAME: "${{ github.ref_name }}"
+      NEMESIS_BUILD_CHANNEL: "production"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+
+      - name: Set up Java
+        uses: actions/setup-java@v5.1.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Download CB1060
+        run: |
+          mkdir -p libs
+          curl -L -o libs/craftbukkit-1060.jar \
+            https://archive.org/download/craftbukkit1060/craftbukkit1-7-3%281060%29.jar
+
+      - name: Build with Gradle
+        run: ./gradlew buildAll
+
+      - name: Upload JARs to release
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          files: build/libs/*.jar
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
