@@ -1,0 +1,4 @@
+item: "diamond"
+singular: "diamond"
+plural: "diamonds"
+format: "{}$"

@@ -1,0 +1,6 @@
+name: ItemEconomy
+main: io.github.adrianvic.itemeconomy.Main
+version: 0.1.0
+depend:
+- Vault
+api-version: '1.21'

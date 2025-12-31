@@ -1,7 +1,0 @@
-name: "Your Plugin"
-version: ${version}
-main: com.example.yourplugin
-api-version: '1.21'
-author: 'Your Name'
-website: "https://example.com"
-description: "Put a description here"
