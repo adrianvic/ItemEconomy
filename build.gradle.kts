@@ -4,7 +4,9 @@ plugins {
 }
 
 group = "io.github.adrianvic.itemeconomy"
-version = providers.environmentVariable("ITEMECO_VERSION_NAME").orElse("unknown").get()
+version = version = project.findProperty("versionName")?.toString() 
+          ?: System.getenv("ITEMECO_VERSION_NAME") 
+          ?: "unknown"
 
 repositories {
     mavenCentral()
@@ -77,7 +79,9 @@ mcVersions.forEach { ver ->
         manifest {
             attributes(
                 "itemeco-Impl-Version" to ver,
-                "itemeco-Environment" to (providers.environmentVariable("ITEMECO_BUILD_CHANNEL").orElse("dev").get())
+                "itemeco-Environment" to (version = project.findProperty("buildChannel")?.toString() 
+          ?: System.getenv("ITEMECO_BUILD_CHANNEL") 
+          ?: "dev")
             )
         }
 
