@@ -30,7 +30,7 @@ jobs:
       #       https://archive.org/download/craftbukkit1060/craftbukkit1-7-3%281060%29.jar
 
       - name: Build with Gradle
-        run: ./gradlew buildAll -PversionName="${{ github.ref_name }}
+        run: ./gradlew buildAll -PversionName="${{ github.ref_name }}"
 
       - name: Upload JARs to release
         uses: softprops/action-gh-release@v2.5.0
