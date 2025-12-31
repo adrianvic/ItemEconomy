@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.adrianvic.itemeconomy"
-version = version = project.findProperty("versionName")?.toString() 
+version = project.findProperty("versionName")?.toString() 
           ?: System.getenv("ITEMECO_VERSION_NAME") 
           ?: "unknown"
 
