@@ -79,7 +79,7 @@ mcVersions.forEach { ver ->
         manifest {
             attributes(
                 "itemeco-Impl-Version" to ver,
-                "itemeco-Environment" to (version = project.findProperty("buildChannel")?.toString() 
+                "itemeco-Environment" to (project.findProperty("buildChannel")?.toString() 
           ?: System.getenv("ITEMECO_BUILD_CHANNEL") 
           ?: "dev")
             )
