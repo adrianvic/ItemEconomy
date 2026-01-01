@@ -2,6 +2,7 @@ package io.github.adrianvic.itemeconomy;
 
 import java.util.*;
 
+import io.github.adrianvic.itemeconomy.commands.Reload;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,9 +13,17 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+   private static Main instance;
+
    public void onEnable() {
+      instance = this;
       Config.loadConfig(new UnrealConfig(this, this.getDataFolder(), "config.yml"));
       Bukkit.getServicesManager().register(Economy.class, new VaultLayer(), this, ServicePriority.High);
+      getCommand("itecoreload").setExecutor(new Reload());
+   }
+
+   public static JavaPlugin getInstance() {
+      return instance;
    }
 
    public void onDisable() {
@@ -26,7 +35,7 @@ public class Main extends JavaPlugin {
       ENDER_CHEST
    }
 
-   public static List<ItemStack> getInventory(Player player, InventoryID inventory) {
+   public static Inventory getInventory(Player player, InventoryID inventory) {
       Inventory inv = player.getInventory();
 
       switch (inventory) {
@@ -34,22 +43,29 @@ public class Main extends JavaPlugin {
             inv = player.getInventory();
          }
          case ENDER_CHEST -> {
-            inv = player.getEnderChest();
+            if (Config.is("ender_chest", "balance")) {
+               inv = player.getEnderChest();
+            } else {
+               inv = getInstance().getServer().createInventory(null, 9);
+            }
          }
       }
 
-      return Arrays.stream(inv.getContents()).map((o) -> {
-         return o == null ? new ItemStack(Material.AIR) : o;
-      }).toList();
+      return inv;
    }
 
-   public static List<ItemStack> getInventory(Player player) {
-      return getInventory(player, InventoryID.INVENTORY);
+   public static List<ItemStack> getInventoryList(Player player, InventoryID inventory) {
+      Inventory inv = getInventory(player, inventory);
+      return Arrays.stream(inv.getContents()).map((o) -> o == null ? new ItemStack(Material.AIR) : o).toList();
+   }
+
+   public static List<ItemStack> getInventoryList(Player player) {
+      return getInventoryList(player, InventoryID.INVENTORY);
    }
 
    public static double getBalance(Player player, InventoryID inventory) {
-      return (double)getInventory(player, inventory).stream().filter(Objects::nonNull).filter((i) -> {
-         return i.getType().equals(Config.ITEM);
+      return (double) getInventoryList(player, inventory).stream().filter(Objects::nonNull).filter((i) -> {
+         return i.getType().equals(Config.ecoItem());
       }).mapToInt(ItemStack::getAmount).sum();
    }
 
@@ -93,8 +109,8 @@ public class Main extends JavaPlugin {
 
 
    public static void addItems(Player player, Material type, int amount) {
-      HashMap<Integer, ItemStack> invOverflow = player.getInventory().addItem(new ItemStack(type, amount));
-      HashMap<Integer, ItemStack> echestOverflow = player.getEnderChest().addItem(new ItemStack(type, invOverflow.values()
+      HashMap<Integer, ItemStack> invOverflow = getInventory(player, InventoryID.INVENTORY).addItem(new ItemStack(type, amount));
+      HashMap<Integer, ItemStack> echestOverflow = getInventory(player, InventoryID.ENDER_CHEST).addItem(new ItemStack(type, invOverflow.values()
               .stream()
               .mapToInt(ItemStack::getAmount)
               .sum()));

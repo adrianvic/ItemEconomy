@@ -1,14 +1,12 @@
 package io.github.adrianvic.itemeconomy;
 
 import java.util.List;
-import java.util.Objects;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class VaultLayer implements Economy {
    public boolean isEnabled() {
@@ -28,15 +26,15 @@ public class VaultLayer implements Economy {
    }
 
    public String format(double amount) {
-      return Config.FORMAT.replace("{}", String.valueOf(amount));
+      return Config.get("format").replace("{}", String.valueOf(amount));
    }
 
    public String currencyNamePlural() {
-      return Config.PLURAL;
+      return Config.get("plural");
    }
 
    public String currencyNameSingular() {
-      return Config.SINGULAR;
+      return Config.get("singular");
    }
 
    public boolean hasAccount(String playerName) {
@@ -63,7 +61,7 @@ public class VaultLayer implements Economy {
          if ((player = Bukkit.getPlayer(playerName)) == null) {
             return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "This player is offline.");
          } else {
-            return !Main.removeItems(player, Config.ITEM, (int)amount) ? new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Insufficient founds.") : new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);
+            return !Main.removeItems(player, Config.ecoItem(), (int)amount) ? new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Insufficient founds.") : new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);
          }
       }
    }
@@ -78,7 +76,7 @@ public class VaultLayer implements Economy {
          if ((player = Bukkit.getPlayer(playerName)) == null) {
             return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "This player is offline.");
          } else {
-            Main.addItems(player, Config.ITEM, (int)amount);
+            Main.addItems(player, Config.ecoItem(), (int)amount);
             return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);
          }
       }
