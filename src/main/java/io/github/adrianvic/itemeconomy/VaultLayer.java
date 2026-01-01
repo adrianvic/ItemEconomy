@@ -16,7 +16,7 @@ public class VaultLayer implements Economy {
    }
 
    public String getName() {
-      return "ItemEconomy";
+      return "ItemEconomy II";
    }
 
    public boolean hasBankSupport() {
@@ -44,14 +44,11 @@ public class VaultLayer implements Economy {
    }
 
    public double getBalance(String playerName) {
-      Player player = Bukkit.getPlayer(playerName);
-      return player != null ? (double)Main.getInventory(player).stream().filter(Objects::nonNull).filter((i) -> {
-         return i.getType().equals(Config.ITEM);
-      }).mapToInt(ItemStack::getAmount).sum() : 0.0D;
+      return Main.getBalance(playerName);
    }
 
    public boolean has(String playerName, double amount) {
-      return this.getBalance(playerName) >= amount;
+      return Main.getBalance(playerName) >= amount;
    }
 
    public EconomyResponse withdrawPlayer(String playerName, double amount) {
@@ -60,13 +57,13 @@ public class VaultLayer implements Economy {
       } else if (amount < 0.0D) {
          return this.depositPlayer(playerName, -amount);
       } else if (!this.has(playerName, amount)) {
-         return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Недостаточно средств");
+         return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Insufficient founds.");
       } else {
          Player player;
          if ((player = Bukkit.getPlayer(playerName)) == null) {
-            return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Игрок офлайн");
+            return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "This player is offline.");
          } else {
-            return !Main.removeItems(player, Config.ITEM, (int)amount) ? new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Недостаточно средств") : new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);
+            return !Main.removeItems(player, Config.ITEM, (int)amount) ? new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Insufficient founds.") : new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);
          }
       }
    }
@@ -79,7 +76,7 @@ public class VaultLayer implements Economy {
       } else {
          Player player;
          if ((player = Bukkit.getPlayer(playerName)) == null) {
-            return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "Игрок офлайн");
+            return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.FAILURE, "This player is offline.");
          } else {
             Main.addItems(player, Config.ITEM, (int)amount);
             return new EconomyResponse(amount, this.getBalance(playerName), ResponseType.SUCCESS, (String)null);

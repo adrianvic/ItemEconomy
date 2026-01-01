@@ -1,13 +1,12 @@
 package io.github.adrianvic.itemeconomy;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,29 +21,87 @@ public class Main extends JavaPlugin {
       super.onDisable();
    }
 
-   public static List<ItemStack> getInventory(Player player) {
-      return Arrays.stream(player.getInventory().getContents()).map((o) -> {
+   public enum InventoryID {
+      INVENTORY,
+      ENDER_CHEST
+   }
+
+   public static List<ItemStack> getInventory(Player player, InventoryID inventory) {
+      Inventory inv = player.getInventory();
+
+      switch (inventory) {
+         case INVENTORY -> {
+            inv = player.getInventory();
+         }
+         case ENDER_CHEST -> {
+            inv = player.getEnderChest();
+         }
+      }
+
+      return Arrays.stream(inv.getContents()).map((o) -> {
          return o == null ? new ItemStack(Material.AIR) : o;
       }).toList();
    }
 
-   public static boolean removeItems(Player player, Material type, int amount) {
-      if (player.getInventory().all(type).values().stream().mapToInt(ItemStack::getAmount).sum() < amount) {
-         return false;
-      } else {
-         player.getInventory().removeItem(new ItemStack[]{new ItemStack(type, amount)});
-         return true;
-      }
+   public static List<ItemStack> getInventory(Player player) {
+      return getInventory(player, InventoryID.INVENTORY);
    }
 
-   public static void addItems(Player player, Material type, int amount) {
-      HashMap<Integer, ItemStack> nope = player.getInventory().addItem(new ItemStack[]{new ItemStack(type, amount)});
-      Iterator var4 = nope.values().iterator();
+   public static double getBalance(Player player, InventoryID inventory) {
+      return (double)getInventory(player, inventory).stream().filter(Objects::nonNull).filter((i) -> {
+         return i.getType().equals(Config.ITEM);
+      }).mapToInt(ItemStack::getAmount).sum();
+   }
 
-      while(var4.hasNext()) {
-         ItemStack v = (ItemStack)var4.next();
-         player.getWorld().dropItemNaturally(player.getLocation(), v);
+   public static double getBalance(Player player) {
+      Double total = 0.0D;
+
+      for (InventoryID id : InventoryID.values()) {
+         total += getBalance(player, id);
       }
 
+      return total;
+   }
+
+   public static double getBalance(String player) {
+      return getBalance(Bukkit.getPlayer(player));
+   }
+
+   public static boolean removeItems(Player player, Material type, int amount) {
+      int remaining = amount;
+
+      remaining = removeFrom(player.getInventory(), type, remaining);
+      if (remaining > 0) {
+         remaining = removeFrom(player.getEnderChest(), type, remaining);
+      }
+
+      return remaining == 0;
+   }
+
+   private static int removeFrom(Inventory inv, Material type, int amount) {
+      if (amount <= 0) return 0;
+
+      for (ItemStack stack : inv.all(type).values()) {
+         int take = Math.min(stack.getAmount(), amount);
+         stack.setAmount(stack.getAmount() - take);
+         amount -= take;
+         if (amount == 0) break;
+      }
+
+      return amount;
+   }
+
+
+   public static void addItems(Player player, Material type, int amount) {
+      HashMap<Integer, ItemStack> invOverflow = player.getInventory().addItem(new ItemStack(type, amount));
+      HashMap<Integer, ItemStack> echestOverflow = player.getEnderChest().addItem(new ItemStack(type, invOverflow.values()
+              .stream()
+              .mapToInt(ItemStack::getAmount)
+              .sum()));
+
+
+      for (ItemStack overflow : echestOverflow.values()){
+         player.getWorld().dropItemNaturally(player.getLocation(), overflow);
+      }
    }
 }
