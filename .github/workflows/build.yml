@@ -13,8 +13,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NEMESIS_VERSION_NAME: "autobuild-${{ github.sha }}"
-      NEMESIS_BUILD_CHANNEL: "autobuild"
+      ITEMECO_VERSION_NAME: "autobuild-${{ github.sha }}"
+      ITEMECO_BUILD_CHANNEL: "autobuild"
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.1
