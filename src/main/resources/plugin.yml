@@ -1,11 +1,32 @@
 name: ItemEconomy
 main: io.github.adrianvic.itemeconomy.Main
-version: 1.1
-depend:
-- Vault
+version: 1.2
+depend: [Vault]
 api-version: '1.21'
 commands:
   itecoreload:
     description: Reloads the config for ItemEconomy
-    usage: /itecoreload
+    usage: "/itecoreload"
     permission: iteco.reload
+    default: op
+  balance:
+    description: Prints your balance
+    usage: "/balance"
+    aliases: [bal]
+    permission: iteco.balance
+  pay:
+    description: Transfers money from your balance to other player
+    usage: "/pay <player> <amount>"
+    permission: iteco.pay
+permissions:
+  iteco.reload:
+    description: "Permission to use the command '/itecoreload'."
+    default: false
+  iteco.balance:
+    description: "Permission to use the command '/balance'."
+    default: true
+    children:
+      iteco.balance.others: false
+  iteco.pay:
+    description: "Permission to use the command '/pay'."
+    default: true

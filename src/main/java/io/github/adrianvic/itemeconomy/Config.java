@@ -3,6 +3,7 @@ package io.github.adrianvic.itemeconomy;
 import org.bukkit.Material;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Config {
@@ -12,10 +13,11 @@ public class Config {
     public static void loadConfig(UnrealConfig conf) {
         uConf = conf;
         entries.put("item", "diamond");
-        entries.put("format", "{}$");
+        entries.put("format", "{} $");
         entries.put("plural", "diamonds");
         entries.put("singular", "diamond");
         entries.put("ender_chest", "balance");
+        entries.put("commands", "true");
 
         Map<String, String> missingValues = new HashMap<>();
 
@@ -42,6 +44,16 @@ public class Config {
 
     public static boolean is(String entry, String value) {
        return entries.get(entry).equals(value);
+    }
+
+    public static boolean safeIs(String entry, String value) {
+        return is(entry.toLowerCase(Locale.ROOT), value.toLowerCase(Locale.ROOT));
+    }
+
+    public static String getCurrencyText(int amount) {
+        return entries.get("format")
+                .replace("{}", String.valueOf(amount))
+                .replace("$", (amount != 1) ? entries.get("plural") : entries.get("singular"));
     }
 
     public static UnrealConfig getuConf() {

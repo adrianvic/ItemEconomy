@@ -26,7 +26,7 @@ public class VaultLayer implements Economy {
    }
 
    public String format(double amount) {
-      return Config.get("format").replace("{}", String.valueOf(amount));
+      return Config.getCurrencyText((int) amount);
    }
 
    public String currencyNamePlural() {

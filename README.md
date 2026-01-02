@@ -9,15 +9,18 @@ Features:
 - Simple logic: Just checks if the user has the item/how many when queried.
 - Customizable Formatting: Define how your currency is displayed, including singular and plural forms.
 - Ender Chest support: Items on Ender Chests are counted in the user balance.
+- Built-int optional balance and pay commands with support for permissions.
 
 ## Configuration Example:
 ```yaml
 item: diamond        # Define the item to be used as currency.
 singular: diamond    # Singular form of the currency.
 plural: diamonds     # Plural form of the currency.
-format: "{}$"        # Customize how the currency is displayed in messages.
+format: "{} $"       # {} will be replaced with the amount and $ either with singular or plural
 ender_chest: balance # Either none or balance
+commands: true       # Disabling this will disable /balance and /pay
 ```
+
 This configuration will use diamonds as the currency, displayed as {amount}$, e.g., "5 diamonds" or "1 diamond".
 
 ## Usage:
