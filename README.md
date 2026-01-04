@@ -1,4 +1,8 @@
 # ItemEconomy II
+<p align="center">
+<img alt="image" align="center" src="https://github.com/user-attachments/assets/06b7c885-e11d-415c-b45c-bea51f7e2cb7" />
+</p>
+
 ItemEconomy II is a fork of [ItemEconomy](https://modrinth.com/plugin/itemeconomy), keeping it updated to later versions of Minecraft and adding new features.
 
 This PaperMC plugin integrates with VaultUnlocked to provide a unique, item-based economy system for your Minecraft server. Instead of relying solely on virtual balances, players use in-game items as physical currency, adding a layer of immersion and realism to your economy.
@@ -21,7 +25,7 @@ ender_chest: balance # Either none or balance
 commands: true       # Disabling this will disable /balance and /pay
 ```
 
-This configuration will use diamonds as the currency, displayed as {amount}$, e.g., "5 diamonds" or "1 diamond".
+This configuration will use diamonds as the currency, displayed as {amount} {name}, e.g., "5 diamonds" or "1 diamond".
 
 ## Usage:
 
