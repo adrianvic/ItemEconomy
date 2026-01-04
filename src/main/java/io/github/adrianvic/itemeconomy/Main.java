@@ -21,6 +21,11 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         Config.loadConfig(new UnrealConfig(this, this.getDataFolder(), "config.yml"));
+        getLogger().info(Messages.ENABLING.get(
+                "ItemEconomy",
+                getDescription().getVersion(),
+                Config.getServerLocale()
+        ));
         economy = new VaultLayer();
         Bukkit.getServicesManager().register(Economy.class, economy, this, ServicePriority.High);
 

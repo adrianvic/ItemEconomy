@@ -2,6 +2,7 @@ package io.github.adrianvic.itemeconomy.commands;
 
 import io.github.adrianvic.itemeconomy.Config;
 import io.github.adrianvic.itemeconomy.Main;
+import io.github.adrianvic.itemeconomy.Messages;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Pay implements CommandExecutor, TabCompleter {
@@ -27,7 +29,7 @@ public class Pay implements CommandExecutor, TabCompleter {
 
         try {
             amount = Integer.parseInt(strings[1]);
-            String amountString = Config.getCurrencyText(amount);
+            String amountString = Config.getCurrencyText(amount, Utils.localeOrDefault(commandSender));
 
             if (commandSender instanceof Player player && Main.getEconomy().has(player, amount)) {
                 if (Bukkit.getPlayer(strings[0]) instanceof Player target) {
@@ -35,23 +37,26 @@ public class Pay implements CommandExecutor, TabCompleter {
                     if (withdrawResponse.transactionSuccess()) {
                         EconomyResponse depositResponse = Main.getEconomy().depositPlayer(target.getName(), amount);
                         if (depositResponse.transactionSuccess()) {
-                            commandSender.sendMessage("Transaction of %s to %s was successfully realized.".formatted(amountString, target.getName()));
-                            target.sendMessage("You received %s from %s.".formatted(amountString, player.getName()));
+                            commandSender.sendMessage(Messages.PAY_SUCCESSFUL.get(
+                                    Utils.localeOrDefault(commandSender),
+                                    amountString,
+                                    Config.playerPrefix(target)));
+                            target.sendMessage(Messages.PAY_RECEIVED.get(target, amountString, Config.playerPrefix(player)));
                         } else {
-                            commandSender.sendMessage("Could not realize transaction: %s".formatted(depositResponse.errorMessage));
+                            commandSender.sendMessage(Messages.PAY_COULD_NOT_REALIZE_TRANSACTION.get(Utils.localeOrDefault(commandSender), depositResponse.errorMessage));
                             Main.getEconomy().depositPlayer(player.getName(), amount);
                         }
                     } else {
-                        commandSender.sendMessage("Could not realize transaction: %s".formatted(withdrawResponse.errorMessage));
+                        commandSender.sendMessage(Messages.PAY_COULD_NOT_REALIZE_TRANSACTION.get(Utils.localeOrDefault(commandSender), withdrawResponse.errorMessage));;
                     }
                 } else {
-                    commandSender.sendMessage("Could not find target player.");
+                    commandSender.sendMessage(Messages.PAY_COULD_NOT_FIND_TARGET.get(Utils.localeOrDefault(commandSender)));
                 }
             } else {
-                commandSender.sendMessage("You don't have enough money.");
+                commandSender.sendMessage(Messages.PAY_NOT_ENOUGH_MONEY.get(Utils.localeOrDefault(commandSender)));
             }
         } catch (NumberFormatException nfe) {
-            commandSender.sendMessage("The amount you tried to pay is not valid.");
+            commandSender.sendMessage(Messages.PAY_INVALID_AMOUNT.get(Utils.localeOrDefault(commandSender)));
             return true;
         }
 

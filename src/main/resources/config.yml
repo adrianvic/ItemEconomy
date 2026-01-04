@@ -1,5 +1,7 @@
-item: "diamond"
+item: "diamond" # MUST be a valid item.
 singular: "diamond"
 plural: "diamonds"
-format: "{} $"
-commands: "true"
+format: "&b{} $" # {} unfolds to amount and $ to singular or plural.
+commands: "true" # Enables or disables plugin commands.
+player: "&b{}" # {} unfolds to player name.
+localization: "default" # can be "en" and "pt" too, if set to anything else uses system locale.

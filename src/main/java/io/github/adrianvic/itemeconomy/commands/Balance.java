@@ -2,6 +2,7 @@ package io.github.adrianvic.itemeconomy.commands;
 
 import io.github.adrianvic.itemeconomy.Config;
 import io.github.adrianvic.itemeconomy.Main;
+import io.github.adrianvic.itemeconomy.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,18 +20,17 @@ public class Balance implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
         if ((commandSender.isOp() || commandSender.hasPermission("iteco.balance.others")) && strings.length > 0) {
             double amount = Main.getEconomy().getBalance(strings[0]);
-            commandSender.sendMessage("%s has %s.".formatted(
-                    strings[0],
-                    Config.getCurrencyText((int) amount)
-                    ));
+            commandSender.sendMessage(Messages.BALANCE_OTHER_SUCCESSFUL.get(
+                    Utils.localeOrDefault(commandSender),
+                    Config.playerPrefix(strings[0]),
+                    Config.getCurrencyText((int) amount, Utils.localeOrDefault(commandSender))
+            ));
         } else {
             if (commandSender instanceof Player player) {
                 double amount = Main.getEconomy().getBalance(player);
-                commandSender.sendMessage("You have %s.".formatted(
-                        Config.getCurrencyText((int) amount)
-                ));
+                commandSender.sendMessage(Messages.BALANCE_SUCCESSFUL.get(player, Config.getCurrencyText((int) amount, Utils.localeOrDefault(commandSender))));
             } else {
-                commandSender.sendMessage("One must be a player to have a balance.");
+                commandSender.sendMessage(Messages.MUST_BE_PLAYER_TO_ISSUE_COMMAND.get());
             }
         }
         return true;
