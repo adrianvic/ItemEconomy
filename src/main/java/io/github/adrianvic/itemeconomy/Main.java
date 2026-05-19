@@ -122,12 +122,24 @@ public class Main extends JavaPlugin {
     }
 
     public static void addItems(Player player, Material type, int amount) {
-        HashMap<Integer, ItemStack> invOverflow = getInventory(player, InventoryID.INVENTORY).addItem(new ItemStack(type, amount));
-        HashMap<Integer, ItemStack> echestOverflow = getInventory(player, InventoryID.ENDER_CHEST).addItem(new ItemStack(type, invOverflow.values()
+        if (amount <= 0) return;
+
+        HashMap<Integer, ItemStack> invOverflow =
+                getInventory(player, InventoryID.INVENTORY)
+                        .addItem(new ItemStack(type, amount));
+
+        int overflowAmount = invOverflow.values()
                 .stream()
                 .mapToInt(ItemStack::getAmount)
-                .sum()));
+                .sum();
 
+        if (overflowAmount <= 0) {
+            return;
+        }
+
+        HashMap<Integer, ItemStack> echestOverflow =
+                getInventory(player, InventoryID.ENDER_CHEST)
+                        .addItem(new ItemStack(type, overflowAmount));
 
         for (ItemStack overflow : echestOverflow.values()) {
             player.getWorld().dropItemNaturally(player.getLocation(), overflow);
