@@ -25,3 +25,13 @@ An updated example configuration file is available [here](https://github.com/adr
 - Players can earn, trade, and store the configured item as physical currency.
 - Once they spend the currency, that amount of the item will be subtracted from their inventory.
 - Administrators can customize the item and formatting to match their server's theme.
+
+## Commands
+<dl>
+  <dt>/balance <player></dt>
+  <dd>Prints player balance, permission is `iteco.balance` but is allowed by default. Requires permission `iteco.balance.others` to specify other user.</dd>
+<dt>/pay <player> <amount></dt>
+<dd>Transfers money from your account to another player's, permission is `iteco.pay` but is allowed by default.</dd>
+<dt>/itecoreload</dt>
+<dd>Reloads the plugin configuration, requires permission `iteco.reload`.</dd>
+</dl>
