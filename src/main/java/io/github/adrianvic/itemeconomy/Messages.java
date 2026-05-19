@@ -17,7 +17,11 @@ public enum Messages {
     PAY_COULD_NOT_REALIZE_TRANSACTION("pay-could-not-realize-transaction"),
     PAY_COULD_NOT_FIND_TARGET("pay-could-not-find-target"),
     PAY_NOT_ENOUGH_MONEY("pay-not-enough-money"),
-    PAY_INVALID_AMOUNT("pay-invalid-amount");
+    PAY_INVALID_AMOUNT("pay-invalid-amount"),
+    RELOADING("reloading"),
+    RELOAD_ERROR("reload-error"),
+    RELOAD_FINISHED("reload-finished");
+
 
     private final String path;
     Messages(String path) { this.path = path; }
